@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultimate Converter Pro</title>
+
+<style>
+body{
+  font-family:Arial;
+  background:#0f172a;
+  color:white;
+  margin:0;
+  text-align:center;
+}
+
+/* LOGIN SCREEN */
+#loginPage{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.login-box{
+  background:#1e293b;
+  padding:30px;
+  border-radius:12px;
+  width:300px;
+}
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:none;
+  border-radius:6px;
+}
+button{
+  background:#22c55e;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+h2{color:#38bdf8}
+
+/* MAIN APP */
+#app{
+  display:none;
+}
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+  margin:15px 0;
+}
+
+/* WELCOME ANIMATION */
+#welcomeBox{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.popup{
+  background:#22c55e;
+  padding:30px;
+  border-radius:15px;
+  font-size:22px;
+  animation:zoom 0.8s ease;
+}
+
+@keyframes zoom{
+  0%{transform:scale(0)}
+  100%{transform:scale(1)}
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <div class="login-box">
+    <h2>🔐 Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="loginMsg"></p>
+  </div>
+</div>
+
+<!-- WELCOME POPUP -->
+<div id="welcomeBox">
+  <div class="popup">
+    🎉 Congratulations! <br> Welcome to Converter Pro 🚀
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+<h1>🚀 Ultimate Converter Pro</h1>
+
+<div class="container">
+
+<div class="card">
+<h2>📦 Data Converter</h2>
+<input type="number" id="dataInput">
+<select id="dataType">
+<option value="mbToKb">MB → KB</option>
+<option value="kbToMb">KB → MB</option>
+</select>
+<button onclick="convertData()">Convert</button>
+<p id="dataResult"></p>
+</div>
+
+<div class="card">
+<h2>📏 Length Converter</h2>
+<input type="number" id="lengthInput">
+<select id="lengthType">
+<option value="kmToM">KM → Meter</option>
+<option value="kmToCm">KM → CM</option>
+<option value="mToKm">Meter → KM</option>
+<option value="cmToKm">CM → KM</option>
+<option value="mToCm">Meter → CM</option>
+<option value="cmToM">CM → Meter</option>
+</select>
+<button onclick="convertLength()">Convert</button>
+<p id="lengthResult"></p>
+</div>
+
+<div class="card">
+<h2>🖼️ Image Format Converter</h2>
+<input type="file" id="imgConvert">
+<select id="formatType">
+<option value="jpeg">JPG</option>
+<option value="png">PNG</option>
+<option value="webp">WEBP</option>
+</select>
+<button onclick="convertImage()">Convert & Download</button>
+<p id="imgConvertResult"></p>
+</div>
+
+<div class="card">
+<h2>🗜️ Image Compressor</h2>
+<input type="file" id="imageInput">
+<input type="number" id="quality" placeholder="Quality 10-100">
+<input type="number" id="maxWidth" placeholder="Width px">
+<button onclick="compressImage()">Compress</button>
+<p id="imageResult"></p>
+</div>
+
+</div>
+</div>
+
+<script>
+// LOGIN SYSTEM
+function login(){
+  const user=document.getElementById('username').value;
+  const pass=document.getElementById('password').value;
+
+  // Demo login (change as you want)
+  if(user==="admin" && pass==="1234"){
+    document.getElementById('loginPage').style.display="none";
+    document.getElementById('app').style.display="block";
+
+    // show animation
+    document.getElementById('welcomeBox').style.display="flex";
+
+    setTimeout(()=>{
+      document.getElementById('welcomeBox').style.display="none";
+    },2500);
+
+  } else {
+    document.getElementById('loginMsg').innerText="❌ Wrong Username or Password";
+  }
+}
+
+// DATA
+function convertData(){
+ let v=+document.getElementById('dataInput').value;
+ let t=document.getElementById('dataType').value;
+ let r=t==='mbToKb'?v*1024:v/1024;
+ document.getElementById('dataResult').innerText=r;
+}
+
+// LENGTH
+function convertLength(){
+ let v=+document.getElementById('lengthInput').value;
+ let t=document.getElementById('lengthType').value;
+ let r;
+
+ if(t==='kmToM') r=v*1000;
+ else if(t==='kmToCm') r=v*100000;
+ else if(t==='mToKm') r=v/1000;
+ else if(t==='cmToKm') r=v/100000;
+ else if(t==='mToCm') r=v*100;
+ else r=v/100;
+
+ document.getElementById('lengthResult').innerText=r;
+}
+
+// IMAGE FORMAT
+function convertImage(){
+ const file=document.getElementById('imgConvert').files[0];
+ if(!file)return;
+ const type=document.getElementById('formatType').value;
+ const img=new Image();
+ const reader=new FileReader();
+
+ reader.onload=e=>img.src=e.target.result;
+
+ img.onload=()=>{
+  const canvas=document.createElement('canvas');
+  canvas.width=img.width;
+  canvas.height=img.height;
+
+  canvas.getContext('2d').drawImage(img,0,0);
+
+  canvas.toBlob(blob=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='converted.'+type;
+    a.click();
+    document.getElementById('imgConvertResult').innerText='Converted ✔';
+  },'image/'+type);
+ };
+
+ reader.readAsDataURL(file);
+}
+
+// COMPRESS
+function compressImage(){
+ const file=document.getElementById('imageInput').files[0];
+ if(!file)return;
+
+ const q=(+document.getElementById('quality').value||70)/100;
+ const maxW=+document.getElementById('maxWidth').value||0;
+
+ const img=new Image();
+ const reader=new FileReader();
+
+ reader.onload=e=>img.src=e.target.result;
+
+ img.onload=()=>{
+  let w=img.width,h=img.height;
+
+  if(maxW && w>maxW){
+    h=h*(maxW/w);
+    w=maxW;
+  }
+
+  const canvas=document.createElement('canvas');
+  canvas.width=w;
+  canvas.height=h;
+
+  canvas.getContext('2d').drawImage(img,0,0,w,h);
+
+  canvas.toBlob(blob=>{
+    document.getElementById('imageResult').innerText='Compressed: '+(blob.size/1024).toFixed(2)+' KB';
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='compressed.jpg';
+    a.click();
+  },'image/jpeg',q);
+ };
+
+ reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
